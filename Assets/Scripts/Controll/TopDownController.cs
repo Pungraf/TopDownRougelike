@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class TopDownController : MonoBehaviour
+public class TopDownController : NetworkBehaviour
 {
     private InputHandler _input;
     private Animator _animator;
@@ -20,12 +21,17 @@ public class TopDownController : MonoBehaviour
     private void Awake()
     {
         _input = GetComponent<InputHandler>();
-        _animator = GetComponent<Animator>();
+        _animator = GetComponentInChildren<Animator>();
+        camera = GameObject.Find("Main Camera").GetComponent<Camera>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(!IsOwner)
+        {
+            return;
+        }
         var targetVector = new Vector3(_input.InputVector.x, 0, _input.InputVector.y);
         //Moving
         MoveTowardTarget(targetVector);
